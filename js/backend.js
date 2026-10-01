@@ -32,16 +32,15 @@ function demoBackend() {
 }
 
 const DEMO_LOOK = {
-  usable: true, unusable_reason: "", overall_score: 6.4, face_shape: "oval",
-  summary: "Sample result. Connect the server to get a real rating of your photo.",
+  usable: true, unusable_reason: "", face_shape: "oval",
+  summary: "Sample guide. Connect the server to get ideas based on your own photo.",
   categories: [
-    { name: "Skin", score: 6, note: "Sample note about skin." },
-    { name: "Hair", score: 5.5, note: "Sample note about hair." },
-    { name: "Face structure", score: 7, note: "Sample note about face structure." },
-    { name: "Grooming", score: 6, note: "Sample note about grooming." },
-    { name: "Style", score: 6.5, note: "Sample note about style." },
+    { name: "Hair", note: "Sample note about hair." },
+    { name: "Skin", note: "Sample note about skin care." },
+    { name: "Grooming", note: "Sample note about grooming." },
+    { name: "Style", note: "Sample note about clothes." },
   ],
-  strengths: ["Sample strength"], weaknesses: ["Sample weakness"],
+  strengths: ["Sample thing that works"], weaknesses: ["Sample easy upgrade"],
   tips: [{ title: "Sample tip", detail: "Real tips will be specific to your photo." }],
   haircuts: [{ name: "Textured crop", why: "Sample reasoning.", ask_barber: "Sample barber wording.", front: "Short textured fringe.", sides: "Faded short.", back: "Tapered neckline." }],
 };

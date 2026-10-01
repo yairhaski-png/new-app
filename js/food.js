@@ -11,7 +11,7 @@ function weightCard(profile, meals) {
     <h3>Estimated weight</h3>
     <div class="weight-row"><span class="big-num">${w.estimate.toFixed(1)}<small> kg</small></span>
       <span class="delta ${w.change >= 0 ? "up" : "down"}">${sign}${Math.abs(w.change).toFixed(2)} kg since ${esc(profile.start_date || "start")}</span></div>
-    <p class="fine">Based on ${w.days} fully logged ${w.days === 1 ? "day" : "days"} against about ${w.maintenance} kcal a day to stay the same. It is an estimate. A day counts only once it has ended and most of your meals are logged.</p>
+    <p class="fine">Based on ${w.days} fully logged ${w.days === 1 ? "day" : "days"} against about ${w.maintenance} kcal a day to stay the same. It is an estimate. A day counts only once it has ended and most of your meals are logged. If you are still growing, do not use this to diet. Talk to a parent or doctor first.</p>
   </section>`;
 }
 

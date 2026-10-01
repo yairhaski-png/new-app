@@ -16,10 +16,10 @@ const num = { type: "number" };
 
 const LOOK_SCHEMA = {
   type: "object", additionalProperties: false,
-  required: ["usable", "unusable_reason", "overall_score", "face_shape", "summary", "categories", "strengths", "weaknesses", "tips", "haircuts"],
+  required: ["usable", "unusable_reason", "face_shape", "summary", "categories", "strengths", "weaknesses", "tips", "haircuts"],
   properties: {
-    usable: { type: "boolean" }, unusable_reason: str, overall_score: num, face_shape: str, summary: str,
-    categories: { type: "array", items: { type: "object", additionalProperties: false, required: ["name", "score", "note"], properties: { name: str, score: num, note: str } } },
+    usable: { type: "boolean" }, unusable_reason: str, face_shape: str, summary: str,
+    categories: { type: "array", items: { type: "object", additionalProperties: false, required: ["name", "note"], properties: { name: str, note: str } } },
     strengths: { type: "array", items: str }, weaknesses: { type: "array", items: str },
     tips: { type: "array", items: { type: "object", additionalProperties: false, required: ["title", "detail"], properties: { title: str, detail: str } } },
     haircuts: { type: "array", items: { type: "object", additionalProperties: false, required: ["name", "why", "ask_barber", "front", "sides", "back"], properties: { name: str, why: str, ask_barber: str, front: str, sides: str, back: str } } },
@@ -36,17 +36,18 @@ const FOOD_SCHEMA = {
   },
 };
 
-const LOOK_PROMPT = `You are a direct, kind grooming and style coach. The user sent a photo of themselves and wants an honest rating with specifics.
+const LOOK_PROMPT = `You are a friendly grooming and style coach. The user sent a photo of themselves and wants practical haircut ideas and grooming tips. The user may be a teenager or an adult.
 
 Rules:
-- If no clear face is visible, or the photo is too dark, blurred or heavily filtered to judge, set usable=false, explain in unusable_reason, and fill the other fields with neutral placeholders (overall_score 0, empty arrays, empty strings).
-- If the person looks under 18, set usable=false and say the app only rates adults.
-- Score on a realistic 1-10 scale where 5 is an average person. Do not inflate. Give each of these categories a score and a one or two sentence note: Skin, Hair, Face structure, Grooming, Style. Judge only what is visible.
-- Focus on things the person can change (skin care, hair, facial hair, eyebrows, glasses, clothing, posture, photo habits). Be specific, never insulting, never about race, disability or medical conditions.
-- strengths and weaknesses: 2 to 4 short items each. tips: 4 to 6 concrete actions in order of impact, each with a title and a detail.
-- face_shape: one or two words (oval, square, round, heart, oblong, diamond).
-- haircuts: 5 to 7 suggestions that fit this face shape and current hair type and length. For each give why it suits them, plain words to tell the barber, and what it looks like from the front, the sides and the back.
-- Add in the summary that this is based on one photo.`;
+- Never give a score, rating, ranking or number about how someone looks, and never say how attractive, good-looking or ugly anyone is. Do not compare the person to others. Do not comment on body shape, weight, race, disability or medical conditions.
+- If no clear face or head is visible, or the photo is too dark or blurred to see hair and face shape, set usable=false, explain in unusable_reason, and fill the other fields with neutral placeholders (empty strings and empty arrays).
+- Describe only what can be changed or chosen: hair, skin care habits, facial hair or grooming, eyebrows, glasses, clothes, posture, how to take better photos. Keep the tone warm, specific and encouraging.
+- face_shape: one or two words (oval, square, round, heart, oblong, diamond), used only to choose haircuts.
+- categories: give notes (no scores) for Hair, Skin care, Grooming and Style. One or two sentences each.
+- strengths: 2 to 3 things that already work. weaknesses: 2 to 3 easy upgrades, phrased as upgrades, never as flaws.
+- tips: 4 to 6 concrete actions in order of impact, each with a title and a detail. For a young person keep skin and hair advice gentle and basic, and suggest seeing a doctor for persistent skin problems.
+- haircuts: 5 to 7 suggestions that fit the face shape and the current hair type and length. For each give why it suits them, plain words to tell the barber, and what it looks like from the front, the sides and the back.
+- Mention in the summary that this is based on one photo.`;
 
 const FOOD_PROMPT = `You estimate calories from a photo of a meal.
 
@@ -95,9 +96,6 @@ Deno.serve(async (req) => {
 
     if (mode === "food" && Array.isArray(out.items)) {
       out.total_kcal = out.items.reduce((s: number, i: { kcal: number }) => s + (Number(i.kcal) || 0), 0);
-    }
-    if (mode === "look" && out.usable) {
-      out.overall_score = Math.max(1, Math.min(10, Number(out.overall_score) || 1));
     }
     return json(out);
   } catch (e) {

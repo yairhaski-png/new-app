@@ -1,6 +1,6 @@
 # Look Max
 
-Mobile web app (installable on iPhone) that rates your look from a photo, suggests haircuts, and estimates calories and weight change from meal photos.
+Mobile web app (installable on iPhone) that gives haircut ideas and grooming tips from a photo (no scores), and estimates calories and weight change from meal photos.
 
 Plain HTML, CSS and JS with no build step. Accounts, data and the AI call run on Supabase.
 Until `js/config.js` is filled in, the app runs in **demo mode**: data stays on the device and AI results are samples.

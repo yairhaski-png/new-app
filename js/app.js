@@ -7,7 +7,7 @@ import { $, esc } from "./ui.js";
 import { localDate } from "./calc.js";
 
 const TABS = [
-  { title: "Looks", render: renderLooks },
+  { title: "Style", render: renderLooks },
   { title: "Food", render: renderFood },
   { title: "Settings", render: renderSettings },
 ];
