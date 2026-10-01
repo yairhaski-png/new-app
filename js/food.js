@@ -1,4 +1,6 @@
 import { $, esc, fmtDate, prepareImage, scoreRing, toast } from "./ui.js";
+import { DEMO } from "./backend.js";
+import { FOODS } from "./data.js";
 import { estimateWeight, localDate, maintenanceKcal, profileComplete } from "./calc.js";
 
 function weightCard(profile, meals) {
@@ -52,11 +54,22 @@ export async function renderFood(root, ctx) {
 
   root.innerHTML = `
     ${ctx.reminderHtml || ""}
+    ${DEMO ? `
+    <section class="card hero">
+      <div class="hero-text"><h1>What are you eating?</h1><p>Search a food, pick how many, and add it. Or type your own.</p></div>
+      <label class="sr" for="f-search">Search foods</label>
+      <input id="f-search" type="search" placeholder="Search: rice, egg, pizza..." autocomplete="off">
+      <ul id="f-results" class="results"></ul>
+      <details class="custom"><summary>Add something not on the list</summary>
+        <label for="c-name">Name</label><input id="c-name" maxlength="60">
+        <label for="c-kcal">Calories</label><input id="c-kcal" type="number" inputmode="numeric" min="0" max="5000">
+        <button class="btn primary" id="c-add" type="button">Add</button></details>
+    </section>` : `
     <section class="card hero">
       <div class="hero-text"><h1>What are you eating?</h1><p>Photograph the plate. Calories and a health score appear in a few seconds.</p></div>
       <label class="btn primary big" for="food-file">Snap a meal</label>
       <input id="food-file" type="file" accept="image/*" hidden>
-    </section>
+    </section>`}
     <div id="food-out" aria-live="polite"></div>
     <section class="card today">
       <div class="today-top"><h3>Today</h3><span><b>${todayKcal}</b>${maint ? ` / ${maint}` : ""} kcal</span></div>
@@ -85,6 +98,7 @@ export async function renderFood(root, ctx) {
   });
 
   const out = $("#food-out", root);
+  if (DEMO) { wireManual(root, ctx); return; }
   $("#food-file", root).onchange = async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
@@ -121,5 +135,35 @@ export async function renderFood(root, ctx) {
     } catch (ex) {
       out.innerHTML = `<div class="card"><h3>That didn't work</h3><p class="error">${esc(ex.message)}</p></div>`;
     }
+  };
+}
+
+function wireManual(root, ctx) {
+  const list = $("#f-results", root);
+  const draw = () => {
+    const q = $("#f-search", root).value.trim().toLowerCase();
+    const hits = (q ? FOODS.filter((f) => f[0].toLowerCase().includes(q)) : FOODS.slice(0, 8)).slice(0, 12);
+    list.innerHTML = hits.length ? hits.map((f, i) => `<li><div><b>${esc(f[0])}</b><span class="meal-meta">${esc(f[1])} · ${f[2]} kcal</span></div>
+      <div class="qty"><label class="sr" for="q-${i}">How many</label><input id="q-${i}" type="number" min="0.5" max="10" step="0.5" value="1" inputmode="decimal"><button class="btn primary add" type="button" data-i="${FOODS.indexOf(f)}" data-q="q-${i}">Add</button></div></li>`).join("") : `<li class="fine">Nothing found. Use "Add something not on the list" below.</li>`;
+  };
+  const save = async (name, kcal, qty) => {
+    await ctx.backend.addMeal({ eaten_on: localDate(), name: qty && qty !== 1 ? `${name} x${qty}` : name, kcal: Math.round(kcal), health_score: null, items: [], thumb: null, notes: "" });
+    toast("Added");
+    await renderFood(root, ctx);
+  };
+  $("#f-search", root).addEventListener("input", draw);
+  draw();
+  list.onclick = (e) => {
+    const b = e.target.closest(".add");
+    if (!b) return;
+    const f = FOODS[+b.dataset.i];
+    const qty = Math.max(0.5, Math.min(10, Number($("#" + b.dataset.q, root).value) || 1));
+    save(f[0], f[2] * qty, qty);
+  };
+  $("#c-add", root).onclick = () => {
+    const name = $("#c-name", root).value.trim();
+    const kcal = Number($("#c-kcal", root).value);
+    if (!name || !(kcal >= 0)) { toast("Enter a name and calories."); return; }
+    save(name, kcal, 1);
   };
 }

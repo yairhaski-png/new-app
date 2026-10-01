@@ -1,4 +1,6 @@
 import { $, esc, fmtDate, prepareImage, toast } from "./ui.js";
+import { DEMO } from "./backend.js";
+import { buildGuide, HAIR_TYPES, LENGTHS, SHAPES } from "./data.js";
 
 export function lookResultHtml(r) {
   return `
@@ -26,7 +28,40 @@ export function lookResultHtml(r) {
     <p class="fine">Ideas, not a verdict. A barber who sees your hair in person has the final say.</p>`;
 }
 
+function chips(name, opts, value) {
+  return `<div class="chips" role="radiogroup" aria-label="${name}">${opts.map(([v, l]) => `<label class="chip-opt"><input type="radio" name="${name}" value="${v}"${v === value ? " checked" : ""}><span>${esc(l)}</span></label>`).join("")}</div>`;
+}
+
+function readSel() {
+  try { return JSON.parse(localStorage.getItem("lm_style_sel") || "null"); } catch { return null; }
+}
+
+function renderLocalStyle(root, ctx) {
+  const sel = readSel() || { type: "wavy", length: "short", shape: "unsure" };
+  root.innerHTML = `
+    ${ctx.reminderHtml || ""}
+    <form id="style-form" class="card hero">
+      <div class="hero-text"><h1>Find your cut</h1><p>Pick what matches you. Get haircut ideas and grooming tips for it.</p></div>
+      <fieldset><legend>Hair type</legend>${chips("type", HAIR_TYPES, sel.type)}</fieldset>
+      <fieldset><legend>Length now</legend>${chips("length", LENGTHS, sel.length)}</fieldset>
+      <fieldset><legend>Face shape</legend>${chips("shape", SHAPES, sel.shape)}</fieldset>
+      <button class="btn primary big" type="submit">Show my guide</button>
+    </form>
+    <div id="look-out" aria-live="polite"></div>`;
+  const out = $("#look-out", root);
+  const show = () => {
+    const f = new FormData($("#style-form", root));
+    const cur = { type: f.get("type"), length: f.get("length"), shape: f.get("shape") };
+    try { localStorage.setItem("lm_style_sel", JSON.stringify(cur)); } catch { /* ignore */ }
+    out.innerHTML = lookResultHtml(buildGuide(cur));
+    out.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  $("#style-form", root).onsubmit = (e) => { e.preventDefault(); show(); };
+  if (readSel()) out.innerHTML = lookResultHtml(buildGuide(sel));
+}
+
 export async function renderLooks(root, ctx) {
+  if (DEMO) return renderLocalStyle(root, ctx);
   const list = await ctx.backend.listLooks();
   const latest = list[0];
   root.innerHTML = `

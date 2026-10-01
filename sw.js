@@ -1,6 +1,6 @@
 // App-shell cache so the app opens fast. Data and AI calls always go to the network.
-const CACHE = "lookmax-v1";
-const SHELL = ["./", "index.html", "css/app.css", "js/app.js", "js/auth.js", "js/backend.js", "js/calc.js", "js/config.js", "js/food.js", "js/looks.js", "js/settings.js", "js/ui.js", "manifest.webmanifest"];
+const CACHE = "lookmax-v2";
+const SHELL = ["./", "index.html", "css/app.css", "js/app.js", "js/auth.js", "js/backend.js", "js/calc.js", "js/config.js", "js/data.js", "js/food.js", "js/looks.js", "js/settings.js", "js/ui.js", "manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

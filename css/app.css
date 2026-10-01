@@ -158,3 +158,23 @@ textarea.meal-name:focus-visible { outline: 3px solid var(--blue-deep); }
 .toast { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 22px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 12px); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 99px; font-size: 0.9rem; opacity: 0; pointer-events: none; transition: 0.25s; max-width: 90vw; text-align: center; z-index: 10; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 @media (prefers-reduced-motion: reduce) { .view.enter, .spinner { animation: none; } .toast { transition: none; } }
+
+/* local mode forms */
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+legend { font-size: 0.82rem; font-weight: 700; color: var(--muted); padding: 0; margin-bottom: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-opt { margin: 0; }
+.chip-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.chip-opt span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 99px; background: rgba(255,255,255,0.85); border: 2px solid transparent; font-weight: 700; font-size: 0.95rem; color: var(--ink); cursor: pointer; }
+.chip-opt input:checked + span { background: var(--accent); color: var(--accent-ink); }
+.chip-opt input:focus-visible + span { outline: 3px solid var(--blue-deep); outline-offset: 2px; }
+.results { list-style: none; margin: 0; padding: 0; display: grid; }
+.results li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(0,0,0,0.06); }
+.results li > div:first-child { min-width: 0; display: grid; }
+.results .meal-meta { padding: 0; }
+.qty { display: flex; gap: 6px; align-items: center; flex: none; }
+.qty input { width: 64px; min-height: 44px; padding: 0 8px; text-align: center; }
+.btn.add { min-height: 44px; padding: 0 14px; border-radius: 12px; margin: 0; width: auto; }
+.custom { background: rgba(255,255,255,0.7); border-radius: 16px; padding: 4px 14px 14px; }
+.custom summary { min-height: 48px; display: flex; align-items: center; font-weight: 700; cursor: pointer; }
+input[type="search"] { -webkit-appearance: none; }
