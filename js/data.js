@@ -82,7 +82,7 @@ export function buildGuide(sel) {
   return {
     usable: true,
     face_shape: sel.shape === "unsure" ? "" : (SHAPES.find((s) => s[0] === sel.shape) || [, ""])[1].toLowerCase(),
-    summary: `Based on what you picked: ${sel.type} hair, ${sel.length} length. ${SHAPE_NOTE[sel.shape]}`,
+    summary: `For ${sel.type} ${sel.length} hair. ${SHAPE_NOTE[sel.shape]}`,
     categories: [
       { name: "Hair", note: hair[0] },
       { name: "Skin care", note: "A simple routine is enough: gentle cleanser, light moisturiser, sunscreen in the morning." },
@@ -93,7 +93,7 @@ export function buildGuide(sel) {
     weaknesses: ["A trim every 3 to 4 weeks keeps the shape sharp", "One small styling product goes a long way"],
     tips: [
       { title: "Trim the sides and neck every 3 to 4 weeks", detail: "The top can grow while the sides stay clean. This is the cheapest upgrade." },
-      { title: "Style it right", detail: hair[1] },
+      { title: hair[1], detail: "" },
       { title: "Wash hair 2 to 3 times a week", detail: "Washing every day dries hair out. On other days rinse with water." },
       { title: "Keep skin simple", detail: "Cleanser, moisturiser, sunscreen. If spots bother you, a doctor or pharmacist can help." },
       { title: "Sleep and water", detail: "8 to 9 hours of sleep and enough water help skin and energy more than any product." },

@@ -3,29 +3,21 @@ import { DEMO } from "./backend.js";
 import { buildGuide, HAIR_TYPES, LENGTHS, SHAPES } from "./data.js";
 
 export function lookResultHtml(r) {
+  const cuts = (r.haircuts || []).slice(0, 3);
+  const tips = (r.tips || []).slice(0, 3);
   return `
-    <div class="card result">
-      <h2>Your style and grooming guide</h2>
-      ${r.face_shape ? `<p class="chip">Face shape: ${esc(r.face_shape)}</p>` : ""}
+    <div class="card result compact">
+      <h2>Your picks</h2>
       <p class="lead">${esc(r.summary)}</p>
-      <div class="cats">${(r.categories || []).map((c) => `
-        <div class="cat"><b>${esc(c.name)}</b><p>${esc(c.note)}</p></div>`).join("")}</div>
-    </div>
-    <div class="card two">
-      <div><h3>Working for you</h3><ul class="plain">${(r.strengths || []).map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div>
-      <div><h3>Easy upgrades</h3><ul class="plain">${(r.weaknesses || []).map((s) => `<li>${esc(s)}</li>`).join("")}</ul></div>
-    </div>
-    <div class="card"><h3>What to do next</h3>
-      ${(r.tips || []).map((t) => `<div class="tip"><b>${esc(t.title)}</b><p>${esc(t.detail)}</p></div>`).join("")}
-    </div>
-    <div class="card"><h3>Haircuts to try</h3>
-      ${(r.haircuts || []).map((h) => `
-        <details class="cut"><summary>${esc(h.name)}</summary>
+      ${cuts.map((h, i) => `
+        <details class="cut"${i === 0 ? " open" : ""}><summary>${i === 0 ? `<span class="best">Best match</span>` : ""}${esc(h.name)}</summary>
           <p>${esc(h.why)}</p>
-          <dl><dt>Front</dt><dd>${esc(h.front)}</dd><dt>Sides</dt><dd>${esc(h.sides)}</dd><dt>Back</dt><dd>${esc(h.back)}</dd><dt>Tell the barber</dt><dd>${esc(h.ask_barber)}</dd></dl>
+          <dl><dt>Tell the barber</dt><dd>${esc(h.ask_barber)}</dd><dt>Front</dt><dd>${esc(h.front)}</dd><dt>Sides</dt><dd>${esc(h.sides)}</dd><dt>Back</dt><dd>${esc(h.back)}</dd></dl>
         </details>`).join("")}
     </div>
-    <p class="fine">Ideas, not a verdict. A barber who sees your hair in person has the final say.</p>`;
+    <div class="card"><h3>3 quick tips</h3>
+      ${tips.map((t) => `<div class="tip"><b>${esc(t.title)}</b></div>`).join("")}
+    </div>`;
 }
 
 function chips(name, opts, value) {
