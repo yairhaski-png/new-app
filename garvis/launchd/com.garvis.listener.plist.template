@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  LaunchAgent for Garvis.
+  Rendered from this template by setup.sh. Placeholders: {{PROJECT_DIR}},
+  {{USER_HOME}}, {{LABEL}}. The rendered file lives at
+  launchd/com.garvis.listener.plist (git-ignored) and is copied to
+  ~/Library/LaunchAgents/ only when you pass --autostart to setup.sh.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>{{LABEL}}</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{PROJECT_DIR}}/.venv/bin/python</string>
+    <string>-u</string>
+    <string>{{PROJECT_DIR}}/src/main.py</string>
+    <string>--daemon</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>{{PROJECT_DIR}}</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <dict>
+    <key>SuccessfulExit</key>
+    <false/>
+    <key>Crashed</key>
+    <true/>
+  </dict>
+
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+  <key>StandardOutPath</key>
+  <string>{{PROJECT_DIR}}/logs/launchd.out.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>{{PROJECT_DIR}}/logs/launchd.err.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>HOME</key>
+    <string>{{USER_HOME}}</string>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+
+  <key>ProcessType</key>
+  <string>Interactive</string>
+</dict>
+</plist>

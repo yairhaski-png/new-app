@@ -1,0 +1,36 @@
+# Garvis Python dependencies.
+# Pinned to compatible ranges — not strict pins, so you get security fixes.
+
+# --- Config and env ---
+python-dotenv>=1.0.0
+PyYAML>=6.0.1
+
+# --- Phase 1: text brain ---
+google-generativeai>=0.8.0
+httpx>=0.27.0
+requests>=2.31.0
+
+# --- Phase 2: voice pipeline ---
+# Wake word (Porcupine + its own recorder)
+pvporcupine>=3.0.2
+pvrecorder>=1.2.2
+
+# Speech-to-text (local, free)
+faster-whisper>=1.0.3
+
+# Text-to-speech (free, Microsoft Edge voices)
+edge-tts>=6.1.12
+
+# Audio playback and I/O
+sounddevice>=0.4.6
+soundfile>=0.12.1
+numpy>=1.26.0
+
+# --- Phase 3: HUD ---
+customtkinter>=5.2.2
+Pillow>=10.3.0
+
+# --- Phase 4: computer control (Mac) ---
+# AppleScript bridge via subprocess, no extra deps needed for `osascript`.
+# psutil is used for battery / storage / process info.
+psutil>=5.9.8

@@ -1,0 +1,38 @@
+# Secrets
+.env
+.env.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime data (keep folders, ignore contents)
+data/*
+!data/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Models cached by whisper etc.
+models/
+.cache/
+
+# Rendered launchd plist (generated from the template by setup.sh)
+launchd/com.garvis.listener.plist

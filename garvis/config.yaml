@@ -1,0 +1,67 @@
+# Garvis settings. Edit anything here, re-run GARVIS.command to pick it up.
+
+assistant:
+  name: Garvis
+  wake_word: "Hey Garvis"      # Phase 2+ — the Porcupine model you'll generate
+  default_language: he          # he (Hebrew) or en (English). Garvis will still auto-detect per utterance.
+  address: "אדוני"              # How Garvis addresses you in Hebrew
+
+voices:
+  hebrew: he-IL-AvriNeural
+  english: en-GB-RyanNeural
+
+brains:
+  # Which brain handles which category. See src/core/router.py (Phase 1).
+  default: gemini               # Simple Q&A, facts, weather, math, chat
+  heavy: claude                 # Computer control, multi-step, plugin orchestration
+  gemini_model: gemini-2.0-flash
+  claude_binary: claude          # Resolved via $CLAUDE_BIN env var if set
+
+audio:
+  sample_rate: 16000
+  mic_device: default
+  speaker_device: default
+
+paths:
+  memory: data/memory.json       # Cross-session facts about you
+  lessons: data/lessons.json     # Self-improvement: things Garvis has learned from your corrections
+  improvements_log: logs/improvements.log
+  main_log: logs/garvis.log
+  stats: data/stats.json         # Response times, success rates, brain usage
+
+# Action Ladder — closed allowlist. Apps NOT in this list require your approval
+# before Garvis can control them. Edit here, not in code.
+allowlist:
+  apps:
+    - Safari
+    - Finder
+    - Notes
+    - Messages
+    - Mail
+    - Calendar
+    - Reminders
+    - System Settings
+    - Music
+    - Spotify
+    - Visual Studio Code
+  websites:
+    - youtube.com
+    - google.com
+    - duckduckgo.com
+    - wikipedia.org
+    - github.com
+
+# For weather, timezone, "where am I" questions. Open-Meteo uses lat/long.
+location:
+  city: Ra'anana
+  country: Israel
+  latitude: 32.1836
+  longitude: 34.8713
+  timezone: Asia/Jerusalem
+
+# Plugins to load on startup (Phase 5). Empty for now.
+enabled_plugins: []
+
+# Retention: the Iron Rule is "no permanent deletion". Trashed files are
+# kept in a staging area for this many days before real removal.
+trash_retention_days: 90
