@@ -2,17 +2,24 @@
 
 Voice assistant for macOS, inspired by JARVIS. Bilingual Hebrew/English. Free-tier only.
 
-**Status: Phase 0 — scaffolding complete. No voice yet. No AI yet. Just the skeleton.**
+**Status: Phase 1 — text chat working. No voice yet.**
 
-## What this phase gives you
+## What's built so far
 
-- Project folder structure
-- Python virtual environment installer (`setup.sh`)
-- Manual launcher (`GARVIS.command`)
-- LaunchAgent plist template (not registered yet — waiting for Phase 2 when the listener exists)
-- Config file (`config.yaml`) with all the knobs
-- Prompt files you can edit later
-- Placeholder entry point that prints a boot message and exits
+**Phase 0 (scaffolding — done)**
+- Project folder, installer, LaunchAgent template, editable prompts, config.
+
+**Phase 1 (text brain — done)**
+- `./GARVIS.command` opens a terminal REPL you can type to.
+- Gemini handles chat/trivia; Claude is wired in for tool-shaped requests
+  and as a fallback when Gemini fails.
+- Bilingual auto-detect per turn (Hebrew script → Hebrew reply).
+- Cross-session memory (`data/memory.json`) — remembers your name across
+  restarts.
+- Rolling 5-turn conversation context.
+- Graceful degradation: "I can't reach the AI service right now" instead
+  of a crash when both brains fail.
+- Offline test harness: `.venv/bin/python -m tests.test_phase1`.
 
 ## Quickstart for your Mac (no programming experience needed)
 
@@ -42,30 +49,49 @@ cd ~/Documents/garvis
 
 This creates a Python virtual environment inside the project (`.venv/`), installs all dependencies, and copies `.env.example` → `.env`.
 
-**4. Test Phase 0 — the boot message.**
+**4. Fill in your Gemini API key.** Open `.env` in your editor and paste
+your key after `GEMINI_API_KEY=`. Get one free at
+`https://aistudio.google.com/apikey` if you don't have it.
+
+```bash
+open -e .env     # TextEdit opens, paste the key, save, close
+```
+
+**5. Open the chat.**
 
 ```bash
 ./GARVIS.command
 ```
 
-You should see:
+You should see the REPL prompt:
 
 ```
-GARVIS boot check
-Python: 3.12.x
-Config loaded: Garvis (wake word: Hey Garvis)
-Phase 0 scaffolding OK. No voice pipeline yet.
+GARVIS — Phase 1 text chat
+Type 'exit', 'quit', or Ctrl+D to leave.
+============================================================
+
+you >
 ```
 
-If you see that, Phase 0 passes. Tell me and we'll move to Phase 1.
+Try: `what is the capital of France?` → Gemini answers.
+Try: `my name is Haski` → remembered. Restart, ask `what's my name?` → still remembers.
+Try: `מה השעה באיטליה?` → answers in Hebrew.
+
+**6. Run the test harness any time:**
+
+```bash
+.venv/bin/python -m tests.test_phase1
+```
+
+Shows 25+ `[OK]` lines and exits 0 when everything's fine.
 
 ## What's next (not built yet)
 
-- **Phase 1:** Text chat in terminal through Gemini + Claude
-- **Phase 2:** Wake word + speech-to-text + text-to-speech
-- **Phase 3:** HUD overlay
-- **Phase 4:** Computer control (open apps, weather, timers, etc.)
-- **Phase 5:** Plugin system + self-improvement
+- **Phase 2:** Wake word (Porcupine), speech-to-text (faster-whisper),
+  text-to-speech (Edge TTS). You say "Hey Garvis" and talk.
+- **Phase 3:** HUD overlay with the status orb.
+- **Phase 4:** Computer control (open apps, weather, timers, battery, YouTube).
+- **Phase 5:** Plugin system + self-improvement (lessons, corrections).
 
 ## Folder layout
 
@@ -80,8 +106,11 @@ garvis/
 ├── launchd/
 │   └── com.garvis.listener.plist.template   LaunchAgent template
 ├── src/
-│   ├── main.py                 Entry point
-│   └── core/                   (phase 1+ modules go here)
+│   ├── main.py                 Entry point (--check for boot test, default = REPL)
+│   ├── cli.py                  Phase 1 text REPL
+│   └── core/                   config, memory, lang, router, brains, prompts
+├── tests/
+│   └── test_phase1.py          25+ offline checks, +1 online smoke
 ├── prompts/
 │   ├── system.txt              Core system prompt (editable)
 │   └── personality.txt         Personality knobs (editable)
